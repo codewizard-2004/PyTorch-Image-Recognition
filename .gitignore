@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+mlenv/
+data/
+*.ckpt
+*.h5
+*.pt
+.ipynb_checkpoints/
+mlvenv/
+
