@@ -2,7 +2,6 @@ import torch
 from tqdm.auto import tqdm
 import time
 
-print("File test")
 
 def train_step(
         model: torch.nn.Module,
@@ -18,7 +17,6 @@ def train_step(
 
     #training loop
     for batch, (X,y) in enumerate(dataloader):
-        print(f"processing train batch:{batch}")
         X = X.to(device)
         y = y.to(device)
 
@@ -55,7 +53,6 @@ def test_step(
 
     with torch.inference_mode():
         for batch, (X, y) in enumerate(dataloader):
-            print("Processing test Batch:{batch}")
             X, y = X.to(device), y.to(device)
 
             # forward pass
@@ -73,6 +70,9 @@ def test_step(
             scheduler.step(test_loss)
     
     return test_loss, test_acc
+
+def log_gpu_mem(tag: str = ""):
+    print(f"[{tag}] Allocated: {torch.cuda.memory_allocated() / 1024**2:.2f} MB | Reserved: {torch.cuda.memory_reserved() / 1024**2:.2f} MB")
 
 
 def run_train_test(
@@ -94,9 +94,9 @@ def run_train_test(
     }
 
     start_time = time.time()
-
+    
     for epoch in tqdm(range(epochs)):
-        print("Starting....\n")
+        
         train_loss, train_acc = train_step(
             model=model,
             dataloader=train_dataloader,
@@ -113,11 +113,11 @@ def run_train_test(
             scheduler=scheduler
         )
 
-        print(f"Epoch:{epoch}Train Loss:{train_loss:.4f}\tTrain Acc:{train_acc:.4f}\tTest Loss:{test_loss:.4f}\tTest Acc:{test_acc:.4f}")
-    result["test_acc"].append(test_acc)
-    result["test_loss"].append(test_loss)
-    result["train_acc"].append(train_acc)
-    result["train_loss"].append(train_loss)
+        print(f"Epoch:{epoch}\tTrain Loss:{train_loss:.4f}\tTrain Acc:{train_acc:.4f}\tTest Loss:{test_loss:.4f}\tTest Acc:{test_acc:.4f}")
+        result["test_acc"].append(test_acc)
+        result["test_loss"].append(test_loss)
+        result["train_acc"].append(train_acc)
+        result["train_loss"].append(train_loss)
 
     end_time = time.time()
     running_time = end_time - start_time
