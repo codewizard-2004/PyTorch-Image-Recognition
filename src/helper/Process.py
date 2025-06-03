@@ -1,5 +1,8 @@
 import torch
 from tqdm.auto import tqdm
+import time
+
+print("File test")
 
 def train_step(
         model: torch.nn.Module,
@@ -15,6 +18,7 @@ def train_step(
 
     #training loop
     for batch, (X,y) in enumerate(dataloader):
+        print(f"processing train batch:{batch}")
         X = X.to(device)
         y = y.to(device)
 
@@ -51,6 +55,7 @@ def test_step(
 
     with torch.inference_mode():
         for batch, (X, y) in enumerate(dataloader):
+            print("Processing test Batch:{batch}")
             X, y = X.to(device), y.to(device)
 
             # forward pass
@@ -70,45 +75,52 @@ def test_step(
     return test_loss, test_acc
 
 
-def run(
-        model: torch.nn.Module,
-        dataloader: torch.utils.data.DataLoader,
-        optimizer: torch.optim.Optimizer,
-        loss_fn: torch.nn.Module,
-        device: torch.device,
-        epochs: int = 5,
-        scheduler = None
+def run_train_test(
+    model: torch.nn.Module,
+    train_dataloader: torch.utils.data.DataLoader,
+    test_dataloader: torch.utils.data.DataLoader,
+    optimizer: torch.optim.Optimizer,
+    loss_fn: torch.nn.Module,
+    device: torch.device,
+    epochs: int = 5,
+    scheduler = None
 ):
     result = {
-        "train_loss": [],
-        "train_acc": [],
-        "test_loss": [],
-        "test_acc": []
+    "train_loss": [],
+    "train_acc": [],
+    "test_loss": [],
+    "test_acc": [],
+    "time": 0
     }
 
+    start_time = time.time()
+
     for epoch in tqdm(range(epochs)):
-    
+        print("Starting....\n")
         train_loss, train_acc = train_step(
             model=model,
-            dataloader=dataloader,
+            dataloader=train_dataloader,
             optimizer=optimizer,
             loss_fn=loss_fn,
             device=device,
-            
         )
 
         test_loss, test_acc = test_step(
-            model= model,
-            dataloader = dataloader,
+            model=model,
+            dataloader=test_dataloader,
             loss_fn=loss_fn,
             device=device,
             scheduler=scheduler
         )
 
         print(f"Epoch:{epoch}Train Loss:{train_loss:.4f}\tTrain Acc:{train_acc:.4f}\tTest Loss:{test_loss:.4f}\tTest Acc:{test_acc:.4f}")
-        result["test_acc"].append(test_acc)
-        result["test_loss"].append(test_loss)
-        result["train_acc"].append(train_acc)
-        result["train_loss"].append(train_loss)
-    
+    result["test_acc"].append(test_acc)
+    result["test_loss"].append(test_loss)
+    result["train_acc"].append(train_acc)
+    result["train_loss"].append(train_loss)
+
+    end_time = time.time()
+    running_time = end_time - start_time
+    result["time"] = running_time
+
     return result
