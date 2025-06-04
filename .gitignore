@@ -17,7 +17,6 @@ customdata/*.tiff
 customdata/*.webp
 *.ckpt
 *.h5
-*.pt
 .ipynb_checkpoints/
 mlvenv/
 
