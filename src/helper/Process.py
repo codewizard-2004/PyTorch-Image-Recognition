@@ -94,8 +94,9 @@ def run_train_test(
     }
 
     start_time = time.time()
-    
+    print("starting....")
     for epoch in tqdm(range(epochs)):
+        log_gpu_mem()
         
         train_loss, train_acc = train_step(
             model=model,
