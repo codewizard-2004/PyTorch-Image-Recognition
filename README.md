@@ -30,6 +30,15 @@ FoodNet/
 ## 🥗 Dataset
 - **Food101**: 101 food categories, 101,000 images.
 - Downloaded and managed automatically via torchvision.
+- Direct download URL (from official source):
+   ```
+   http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz
+   ```
+   or
+
+   ```bash 
+   wget -c http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz
+   ```
 
 ---
 

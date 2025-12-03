@@ -1,7 +1,3 @@
-import torch
-import torchvision
-from torch import nn
-
 from torchvision import datasets
 import random
 from pathlib import Path
@@ -120,6 +116,13 @@ def create_custom_data(data_loc: Path, train_loc: Path, test_loc: Path, classes:
     This function is used to create a custom data for using in PyTorch's ImageFolder.
     Function will randomly select the size% of data given byt the user.
     It will then split that data into train and test folders based on the train_test_split value given by the user
+    Args:
+        data_loc: base Path for input data
+        train_loc: Path for training images folder
+        test_loc: Path for test images folder
+        classes: List of classes from where we need to fetch
+        size: Int value showing percent of image that need to be taken
+        train_test_split
     """
     for classname in classes:
         #setup the individual class path
@@ -156,10 +159,15 @@ def create_custom_data(data_loc: Path, train_loc: Path, test_loc: Path, classes:
         print(f"Completed creating custom {dest_path}")
         
 
-def create_custom_dirs(base_dir):
+def create_custom_dirs(base_dir) -> tuple[Path, Path]:
     """
     Creates custom train and test directories under the given base_dir.
     Returns the paths to train and test directories.
+    Args:
+        base_dir: base Path at where train and test directories need to be made
+    Returns:
+        custom_train_loc: Path of train directory
+        custom_test_loc: Path of test directory
     """
     custom_train_loc = base_dir / "train"
     custom_test_loc = base_dir / "test"
