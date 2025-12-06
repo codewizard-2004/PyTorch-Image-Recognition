@@ -3,11 +3,12 @@ __pycache__/
 *.pyo
 *.pyd
 .env
-venv/
 mlenv/
-data/
+data/custom_dataset
+data/food-101
 customdata/
 pizza_steak_sushi/
+data/*.gz
 customdata/*/*.png
 customdata/*/*.jpg
 customdata/*.jpeg
