@@ -76,3 +76,62 @@ def make_prediction(model: torch.nn.Module, data: tuple, classes: list, device: 
             confidences[classes[i]] = round(float(prob) * 100, 3)
 
         return classes[int(y_pred_class.item())], confidences, inference_time
+
+def analyze_model(
+        model: torch.nn.Module, 
+        train_dataset: torch.utils.data.Dataset, 
+        test_dataset: torch.utils.data.Dataset, 
+        classes: list ,
+        device: str
+)-> None:
+    """
+    Analyzes the model on the training and test datasets
+    Args:
+        model: PyTorch model to analyze
+        train_dataset: Training dataset
+        test_dataset: Test dataset
+        classes: List of classes
+        device: Device to run the model on
+    """
+    correct = 0
+    wrong = 0
+    inf_time = 0
+    for data in train_dataset:
+      prediction, conf, inf = make_prediction(model, data,classes, torch.device(device))
+      if prediction == classes[data[1]]:
+        correct += 1
+      else:
+        wrong += 1
+      inf_time += inf
+    
+    for data in test_dataset:
+      prediction, conf, inf = make_prediction(model, data,classes, torch.device(device))
+      if prediction == classes[data[1]]:
+        correct += 1
+      else:
+        wrong += 1
+      inf_time += inf
+
+    print(f"total: {len(train_dataset) + len(test_dataset)}")
+    print(f"correct: {correct}")
+    print(f"Incorrect: {wrong}")
+    print(f"Correct percent: {(correct*100)/(correct+wrong): .2f}")
+    print(f"average inference time: {inf_time/(correct+wrong): .2f}")
+
+def get_model_final_result(result: dict[str ,float])->dict[str, float]:
+    """
+    Gets the final result of the model
+    Args:
+        result: Dictionary containing the result of the model
+    Returns:
+        Dictionary containing the final result of the model
+    """
+    model_result = {}
+
+    for i in result:
+        if i == "time":
+            model_result[i] = result[i]
+        else:
+            model_result[i] = result[i][-1]
+
+    return model_result
