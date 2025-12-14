@@ -132,6 +132,57 @@ def get_model_final_result(result: dict[str ,float])->dict[str, float]:
         if i == "time":
             model_result[i] = result[i]
         else:
-            model_result[i] = result[i][-1]
+            model_result[i] = result[i][-1] #type: ignore
 
     return model_result
+
+def convert_state_dict_to_onnx(
+      model: torch.nn.Module,
+      state_dict_path: str,
+      output_path: str,
+      input_shape = (1, 3, 224, 224),
+      opset_version = 17
+):
+   """
+   Converts a PyTorch state_dict (.pth/.pt) to ONNX.
+
+    Args:
+        model (torch.nn.Module): Model architecture (must match state_dict)
+        state_dict_path (str): Path to .pth/.pt state_dict file
+        output_path (str): Destination path for .onnx file
+        input_shape (tuple): Dummy input shape (default: ImageNet style)
+        opset_version (int): ONNX opset version (>=17 recommended)
+    Ouput:
+        none
+   """ 
+   state_dict_path = Path(state_dict_path) #type: ignore
+   onnx_output_path = Path(output_path)
+
+   # Load weights from the pytorch model
+   device = "cuda" if torch.cuda.is_available else "cpu"
+   state_dict = torch.load(state_dict_path, map_location = device)
+   model.load_state_dict(state_dict)
+   model.eval()
+
+   # create a dummy input of the given size
+   dummy_input = torch.randn(*input_shape)
+
+   # Export to onnx
+   torch.onnx.export(
+       model,
+       dummy_input,
+       onnx_output_path.as_posix(),
+       export_params=True,
+       opset_version=opset_version,
+       do_constant_folding=True,
+       input_names=["input"],
+       output_names=["output"],
+       dynamic_axes={
+           "input": {0: "batch_size"},
+           "output": {0: "batch_size"}
+       },
+       dynamo = False
+    )
+   
+   print(f"Model saved to: {onnx_output_path}")
+

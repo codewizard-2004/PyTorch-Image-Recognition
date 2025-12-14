@@ -16,10 +16,10 @@ Welcome to the FoodNet project! This repository contains state-of-the-art food r
 ## 📂 Project Structure
 ```
 FoodNet/
-├── src/
-│   ├── notebooks/         # Jupyter notebooks for experiments
-│   ├── models/            # Model definitions
-│   └── helper/            # Utility scripts
+|── data/                  # contains datasets
+|── notebooks/             # various notebooks used
+|── models/                # models created in pth form
+|── utils                  # utility functions
 ├── requirements.txt       # Python dependencies
 ├── setup.py               # Project setup
 └── README.md              # Project documentation
