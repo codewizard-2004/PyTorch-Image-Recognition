@@ -1,4 +1,4 @@
-# 🍽️ Food Recognition Models with PyTorch
+﻿# 🍽️ Food Recognition Models with PyTorch
 
 Welcome to the FoodNet project! This repository contains state-of-the-art food recognition models built using PyTorch and trained on the Food101 dataset. Easily classify food images into 101 delicious categories with modern deep learning techniques.
 
